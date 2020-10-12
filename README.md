@@ -12,7 +12,7 @@ For vegetation overgrowing, [Hedera](https://github.com/radiatoryang/hedera) was
 ![scene](scene.png)
 
 ### References: ###
-Thomas Luft (2007). Ivy Generator. <http://www.ivy-generator.com/>
-OskarSigvardsson (2017). Voronoi destruction effect. <https://github.com/OskarSigvardsson/unity-delaunay>
-radiatoryang, yangrobertw, LostEarth (2019). Hedera. <https://github.com/radiatoryang/hedera>
+Thomas Luft (2007). Ivy Generator. <http://www.ivy-generator.com/>\
+OskarSigvardsson (2017). Voronoi destruction effect. <https://github.com/OskarSigvardsson/unity-delaunay>\
+radiatoryang, yangrobertw, LostEarth (2019). Hedera. <https://github.com/radiatoryang/hedera>\
 danbystrom (2019). ScamScatter. <https://github.com/danbystrom/ScamScatter>
