@@ -64,9 +64,6 @@ namespace Ivy
                 terrainSearchDisc = new Vector3[TERRAIN_SEARCH_COUNT];
             }
 
-#if UNITY_EDITOR
-            //EditorApplication.update += Instance.OnEditorUpdate;
-#endif
             ivyBehaviors.Clear();
         }
 
@@ -157,9 +154,6 @@ namespace Ivy
             if (!grewThisFrame && needToSaveAssets)
             {
                 needToSaveAssets = false;
-#if UNITY_EDITOR
-                //AssetDatabase.SaveAssets();
-#endif
             }
         }
 
@@ -322,11 +316,6 @@ namespace Ivy
         public static void ForceIvyGrowth(IvyGraph graph, IvyProfile ivyProfile, Vector3 newPos, Vector3 newNormal) {
             newPos -= graph.seedPos; // convert to local space
 
-            // find the nearest root end node, and continue off of it
-            // var closestRoot = graph.roots.OrderBy( root => Vector3.Distance( newPos, root.nodes.Last().localPos ) ).FirstOrDefault();
-            // if ( closestRoot == null ) {
-            // 	return;
-            // }
             var closestRoot = graph.roots[0];
 
             var lastNode = closestRoot.nodes[ closestRoot.nodes.Count-1 ];
@@ -336,10 +325,7 @@ namespace Ivy
 
             newNode.p = newPos;
             newNode.g = (0.5f * lastNode.g + 0.5f * growVector.normalized).normalized;
-            //newNode.adhesionVector = ComputeAdhesion( newPos, ivyProfile );
-            //if ( newNode.adhesionVector.sqrMagnitude < 0.01f ) {
-                newNode.c = -newNormal;
-            //}
+            newNode.c = -newNormal;
             newNode.s = lastNode.s + growVector.magnitude;
             newNode.cS = lastNode.cS + growVector.magnitude;
             newNode.fS = 0f;
@@ -348,7 +334,6 @@ namespace Ivy
             closestRoot.nodes.Add( newNode );
             closestRoot.useCachedBranchData = false;
             closestRoot.useCachedLeafData = false;
-            // TryGrowIvyBranch( graph, ivyProfile, closestRoot, newNode );
 
             var cache = IvyRoot.GetMeshCacheFor(closestRoot);
             cache.debugLineSegmentsList.Add(lastNode.p + graph.seedPos);
@@ -621,12 +606,6 @@ namespace Ivy
                     if ( Physics.Raycast( pos, currentSearchPoint - pos, out terrainRayHit, minDistance, ivyProfile.collisionMask, QueryTriggerInteraction.Ignore) ) {
                         closestPoint = pos - terrainRayHit.normal * Vector3.Distance(closestSearchPoint, pos);
                     }
-                /*
-                } else if (col is MeshCollider) {
-                    MeshCollider mc = (MeshCollider)col;
-                    closestPoint = col.ClosestPoint( pos );
-                    Debug.Log($"pos: {pos} Mesh Collider convex {mc.convex}, closest point: {closestPoint}");
-                */
                 } else
                 {
                     closestPoint = col.ClosestPoint(pos);
@@ -758,7 +737,7 @@ namespace Ivy
             } else 
 #endif
             {
-            Undo.DestroyObjectImmediate( go );
+                Undo.DestroyObjectImmediate( go );
             }
 #endif
         }
