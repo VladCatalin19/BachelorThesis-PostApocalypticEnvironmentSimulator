@@ -43,19 +43,6 @@ public static class Fragmenter
 
     public static IEnumerator Fragment(GameObject toFragmentObject, Stats returnedStats, bool areaInsteadOfSites = false)
     {
-        // Skip already fragmented meshes.
-        /*
-        if (toFragmentObject == null || !toFragmentObject.CompareTag(Constants.DestroyableStr))
-        {
-            Debug.Log("Fragmenter Break");
-            if (returnedStats != null)
-            {
-                returnedStats.isDone = true;
-                returnedStats.fragments = 0;
-            }
-            yield break;
-        }
-        */
         returnedStats.totalTime = 0L;
         Debug.Log("Fragmentation started!");
         Stopwatch stopWatch = new Stopwatch();
@@ -82,10 +69,6 @@ public static class Fragmenter
         parentObject.transform.SetParent(toFragmentObject.transform.parent, false);
 
         FragmentsProperties.Copy(parentObject.AddComponent<FragmentsProperties>(), fragmentsProperties);
-        foreach (Transform child in toFragmentObject.transform)
-        {
-            //child.SetParent(parentObject.transform);
-        }
 
         // Iterate through the mesh's triangles and divide each triangle in separate Voronoi diagrams.
         // The generated fragments will retain the original mesh's materials, normals and uv coordinates.
@@ -94,21 +77,6 @@ public static class Fragmenter
 
         for (int subMeshIndex = 0; subMeshIndex < mesh.subMeshCount; ++subMeshIndex)
         {
-            /*
-            Dictionary<string, float> densities = new Dictionary<string, float>()
-            {
-                { "Door", 800},
-                { "Roof", 800},
-                { "WoodRoof", 800},
-                { "WoodFloor", 800},
-                { "Wall", 2300},
-                { "Window", 2300}
-            };
-
-            Debug.Log($"{toFragmentObject.GetComponent<MeshRenderer>().materials[subMeshIndex].name}");
-            fragmentsProperties.density = densities[toFragmentObject.GetComponent<MeshRenderer>().materials[subMeshIndex].name.Split(' ')[0]];
-            */
-
             int[] triangles = mesh.GetTriangles(subMeshIndex);
             // TODO paralelize
             for (int ti = 0; ti < triangles.Length; ti += 3)
@@ -135,8 +103,6 @@ public static class Fragmenter
                         fragment.name = Constants.FrozenFragmentStr + totalFragments;
                         fragment.transform.SetParent(parentObject.transform, false);
                         fragment.tag = Constants.FrozenFragmentStr;
-                        //fragment.layer = LayerMask.NameToLayer(Constants.FrozenFragmentStr);
-                        // TODO density different for each material
 
                         MeshRenderer goMeshRenderer = toFragmentObject.GetComponent<MeshRenderer>();
                         MeshRenderer fragmentMeshRenderer = fragment.AddComponent<MeshRenderer>();
@@ -282,45 +248,6 @@ public static class Fragmenter
 
                     CreateJoint(go, neighbour);
                     CreateJoint(neighbour, go);
-
-                    /*
-                    Vector3 center = FragmentCentre(go);
-                    Vector3 centreNeigh = FragmentCentre(colNeigh.gameObject);
-
-                    HingeJoint hj = go.AddComponent<HingeJoint>();
-                    hj.connectedBody = colNeigh.attachedRigidbody;
-                    hj.enableCollision = false;
-                    hj.breakForce = Constants.FragmentHingeBreakForce;
-                    hj.anchor = centreNeigh;
-                    hj.axis = centreNeigh - center;
-
-                    JointLimits hinjeLimits = hj.limits;
-                    hinjeLimits.min = Constants.FragmentHingeMinAngleDeg;
-                    hinjeLimits.bounciness = 0.0f;
-                    hinjeLimits.bounceMinVelocity = 0.0f;
-                    hinjeLimits.max = Constants.FragmentHingeMaxAngleDeg;
-                    hj.limits = hinjeLimits;
-                    hj.useLimits = true;
-                    
-                    graph.AddEdge(go, neighbour, hj);
-
-                    hj = neighbour.AddComponent<HingeJoint>();
-                    hj.connectedBody = col.attachedRigidbody;
-                    hj.enableCollision = false;
-                    hj.breakForce = Constants.FragmentHingeBreakForce;
-                    hj.anchor = center;
-                    hj.axis = center - centreNeigh;
-
-                    hinjeLimits = hj.limits;
-                    hinjeLimits.min = Constants.FragmentHingeMinAngleDeg;
-                    hinjeLimits.bounciness = 0.0f;
-                    hinjeLimits.bounceMinVelocity = 0.0f;
-                    hinjeLimits.max = Constants.FragmentHingeMaxAngleDeg;
-                    hj.limits = hinjeLimits;
-                    hj.useLimits = true;
-
-                    graph.AddEdge(neighbour, go, hj);
-                    */
                 }
             }
             //empty.transform.SetParent(null);
@@ -410,10 +337,6 @@ public static class Fragmenter
         stopWatch.Start();
         int fragmentsExploded = 0;
 
-        /*
-        Collider[] colliders = Physics.OverlapSphere(hitPoint, radius,
-            LayerMask.GetMask(new string[]{ Constants.FrozenFragmentStr, Constants.MovingFragmentStr }));
-        */
         Collider[] colliders = Physics.OverlapSphere(hitPoint, radius);
 
         HashSet<FragmentsGraph> graphsToFlood = new HashSet<FragmentsGraph>();
@@ -545,9 +468,6 @@ public static class Fragmenter
                 }
             }
         }
-
-
-
 
         foreach (FragmentsGraph fragmentsGraph in graphsToFlood)
         {
@@ -833,16 +753,6 @@ public static class Fragmenter
                 float thickness = Random.Range(fragmentsProperties.minThickness, fragmentsProperties.maxThickness);
                 fragments.Add(PolygonToFrustum(vertices, thickness));
             }
-            /*
-            else
-            {
-                Vector3 pos = reverseRotation * (new Vector3(sites[i].x, sites[i].y, z) - center) + center;
-                pos.Scale(reverseScale);
-                GameObject go = new GameObject();
-                go.transform.localPosition = pos; 
-                fragments.Add(go);
-            }
-            */
         }
         return fragments;
     }
