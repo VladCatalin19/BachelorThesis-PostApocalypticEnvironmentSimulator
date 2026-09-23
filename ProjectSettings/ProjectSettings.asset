@@ -656,10 +656,10 @@ PlayerSettings:
   facebookXfbml: 0
   facebookFrictionlessRequests: 1
   apiCompatibilityLevel: 6
-  cloudProjectId: 6923ebb7-ce1b-4b47-88f4-7f6950118f53
+  cloudProjectId: 
   framebufferDepthMemorylessMode: 0
-  projectName: Licenta
-  organizationId: vladalien19
+  projectName: 
+  organizationId: 
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 0
   disableOldInputManagerSupport: 0
